@@ -12,9 +12,11 @@ export default function Board() {
   // state to check whose turn it is
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
+  let status;
 
   function handleClick(i) {
-    if(squares[i])
+    console.log(moves);
+    if (squares[i])
       return;
     const nextSquares = squares.slice();
     xIsNext ? nextSquares[i] = "X" : nextSquares[i] = "O";
@@ -23,11 +25,16 @@ export default function Board() {
   }
 
   const winner = calculateWinner();
+  if(winner) {
+    status = "Winner : " + winner
+  } else {
+    status = "Next Player : " + (xIsNext ? "X" : "O");
+  }
 
   return (
     <>
       <div className="winner-row">
-        <h3>Winner : <span className='winner-player'>{winner}</span></h3>
+        <h3 className='winner-player'>{status}</h3>
       </div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
@@ -50,30 +57,20 @@ export default function Board() {
   // decide winner
   function calculateWinner() {
     const lines = [
-      [0,1,2],
-      [3,4,5],
-      [6,7,8],
-      [0,3,6],
-      [1,4,7],
-      [2,5,8],
-      [0,4,8],
-      [2,4,6]
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
     ]
-    for(let line of lines) {
-      const [a,b,c] = line;
-      if(squares[a] && squares[a] === squares[b] && squares[b] === squares[c])
+    for (let line of lines) {
+      const [a, b, c] = line;
+      if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c])
         return squares[a];
-      else {
-        let isEmptyCount = 0;
-        for(let i of squares) {
-          if(!squares[i]) {
-            isEmptyCount++;
-          }
-        }
-        if(isEmptyCount === 0) {
-          return "Draw !";
-        }
-      }
     }
+    return "Draw!";
   }
 }
