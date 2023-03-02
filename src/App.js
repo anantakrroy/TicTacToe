@@ -15,7 +15,6 @@ export default function Board() {
   let status;
 
   function handleClick(i) {
-    console.log(moves);
     if (squares[i])
       return;
     const nextSquares = squares.slice();
@@ -24,11 +23,18 @@ export default function Board() {
     setXIsNext(!xIsNext);
   }
 
-  const winner = calculateWinner();
-  if(winner) {
-    status = "Winner : " + winner
-  } else {
-    status = "Next Player : " + (xIsNext ? "X" : "O");
+  if (squares.every(e => e !== null)) {
+    const winner = calculateWinner();
+    if (winner) {
+      console.log(winner);
+      if (winner === "Draw!") {
+        status = "Match Result : " + winner;
+      } else {
+        status = "Winner : " + winner
+      }
+    } else {
+      status = "Next Player : " + (xIsNext ? "X" : "O");
+    }
   }
 
   return (
