@@ -88,3 +88,8 @@ body {
 .game-info {
   margin-left: 20px;
 }
+
+.winner-player {
+  font-size: 1.2rem;
+  color: blue;
+}
