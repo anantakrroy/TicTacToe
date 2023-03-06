@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 function Square({ value, onSquareClick }) {
   return (
@@ -8,39 +8,36 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-export default function Board() {
-  // state to check whose turn it is
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
+function Board({ xIsNext, squares, onPlay }) {
   let status;
-
+  // decide whose move it is
   function handleClick(i) {
-    if (squares[i])
-      return;
+    if (squares[i]) return;
     const nextSquares = squares.slice();
-    xIsNext ? nextSquares[i] = "X" : nextSquares[i] = "O";
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    xIsNext ? (nextSquares[i] = "X") : (nextSquares[i] = "O");
+    onPlay(nextSquares);
   }
 
-  if (squares.every(e => e !== null)) {
-    const winner = calculateWinner();
+  // Display winner text or next player text
+  if (squares.every((e) => e !== null)) {
+    const winner = calculateWinner(squares);
     if (winner) {
       console.log(winner);
       if (winner === "Draw!") {
         status = "Match Result : " + winner;
       } else {
-        status = "Winner : " + winner
+        status = "Winner : " + winner;
       }
-    } else {
-      status = "Next Player : " + (xIsNext ? "X" : "O");
     }
+  } else {
+    status = "Next Player : " + (xIsNext ? "X" : "O");
   }
 
+  // The board view
   return (
     <>
       <div className="winner-row">
-        <h3 className='winner-player'>{status}</h3>
+        <h3 className="winner-player">{status}</h3>
       </div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
@@ -61,7 +58,7 @@ export default function Board() {
   );
 
   // decide winner
-  function calculateWinner() {
+  function calculateWinner(squares) {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -70,8 +67,8 @@ export default function Board() {
       [1, 4, 7],
       [2, 5, 8],
       [0, 4, 8],
-      [2, 4, 6]
-    ]
+      [2, 4, 6],
+    ];
     for (let line of lines) {
       const [a, b, c] = line;
       if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c])
@@ -79,4 +76,26 @@ export default function Board() {
     }
     return "Draw!";
   }
+}
+
+export default function Game() {
+  const [xIsNext, setXIsNext] = useState(true);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const currentSquares = history[history.length - 1];
+
+  function handlePlay(nextSquares) {
+    setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  }
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-history">
+        <ol></ol>
+      </div>
+    </div>
+  );
 }
